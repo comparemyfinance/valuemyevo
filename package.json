@@ -10,7 +10,7 @@
     "build:web": "npm --workspace @evoworth/web run build",
     "start:web": "npm --workspace @evoworth/web run start",
     "lint:web": "npm --workspace @evoworth/web run lint",
-    "test:api": "echo Python tests live in apps/api and require a local Python install."
+    "test:api": "powershell -ExecutionPolicy Bypass -File .\\scripts\\test-api.ps1"
   },
   "engines": {
     "node": ">=20.0.0"

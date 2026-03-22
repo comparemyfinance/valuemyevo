@@ -23,6 +23,9 @@ def build_valuation_response(card: EvoCardInput) -> ValuationResponse:
 
 
 def _calculate_median_price(source_prices: list) -> int:
+    if not source_prices:
+        return 0
+
     price_points = [source_price.price for source_price in source_prices]
     return int(calculate_median([float(price) for price in price_points]))
 
