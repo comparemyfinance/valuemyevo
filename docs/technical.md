@@ -10,10 +10,10 @@
 ## Current architecture
 
 - The web app is a thin landing page shell.
-- The API exposes root, health, and evo valuation endpoints.
+- The API exposes root, health, `POST /valuation`, and `POST /valuation/evo` endpoints.
 - Environment variables are app-local and documented with `.env.example` files.
 - The API keeps HTTP wiring in routers, business flow in services, data normalization in adapters, typed contracts in schemas, and shared parsing and median helpers in utils.
-- The valuation API contract is `POST /valuation/evo`, built around `EvoCardInput`, `SourcePrice`, `ComparableCard`, and `ValuationResponse`.
+- The valuation API contract is centered on `POST /valuation`, with `POST /valuation/evo` retained as an alias, both built around `EvoCardInput`, `SourcePrice`, `ComparableCard`, and `ValuationResponse`.
 
 ## Next recommended steps
 

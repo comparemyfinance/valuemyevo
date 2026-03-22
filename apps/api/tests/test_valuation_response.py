@@ -9,9 +9,9 @@ class ValuationResponseTests(unittest.TestCase):
     def setUp(self) -> None:
         self.client = TestClient(app)
 
-    def test_evo_valuation_shape(self) -> None:
+    def test_valuation_shape(self) -> None:
         response = self.client.post(
-            "/valuation/evo",
+            "/valuation",
             json={
                 "player_name": "Jude Bellingham",
                 "base_card_type": "Rare Gold",
@@ -30,26 +30,7 @@ class ValuationResponseTests(unittest.TestCase):
                     "physical": 86,
                 },
                 "platform": "playstation",
-                "source_prices": [
-                    {
-                        "source_name": "futbin",
-                        "platform": "playstation",
-                        "price": 120000,
-                        "currency": "coins",
-                    },
-                    {
-                        "source_name": "futwiz",
-                        "platform": "playstation",
-                        "price": 126000,
-                        "currency": "coins",
-                    },
-                    {
-                        "source_name": "easySBC",
-                        "platform": "playstation",
-                        "price": 123000,
-                        "currency": "coins",
-                    },
-                ],
+                "source_prices": [],
             },
         )
 
@@ -79,7 +60,37 @@ class ValuationResponseTests(unittest.TestCase):
         )
         self.assertEqual(response_json["player_name"], "Jude Bellingham")
         self.assertEqual(response_json["base_card_type"], "Rare Gold")
-        self.assertEqual(response_json["median_price_now"], 123000)
+        self.assertEqual(response_json["median_price_now"], 191100)
         self.assertEqual(response_json["platform"], "playstation")
-        self.assertEqual(response_json["comparable_cards"], [])
-        self.assertEqual(response_json["confidence"], 0.65)
+        self.assertEqual(len(response_json["source_prices"]), 3)
+        self.assertEqual(len(response_json["comparable_cards"]), 2)
+        self.assertEqual(response_json["confidence"], 0.89)
+        self.assertIn("mocked", response_json["explanation"])
+
+    def test_evo_valuation_alias_shape(self) -> None:
+        response = self.client.post(
+            "/valuation/evo",
+            json={
+                "player_name": "Jude Bellingham",
+                "base_card_type": "Rare Gold",
+                "final_overall": 91,
+                "positions": ["CM", "CAM"],
+                "weak_foot": 4,
+                "skill_moves": 4,
+                "playstyles": ["Incisive Pass", "Technical"],
+                "playstyles_plus": ["Pinged Pass"],
+                "face_stats": {
+                    "pace": 84,
+                    "shooting": 83,
+                    "passing": 88,
+                    "dribbling": 89,
+                    "defending": 82,
+                    "physical": 86,
+                },
+                "platform": "playstation",
+                "source_prices": [],
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["median_price_now"], 191100)
