@@ -2,6 +2,8 @@
 
 import { FormEvent, useState } from "react";
 
+import type { LandingPageContent } from "../lib/content";
+
 type Platform = "playstation" | "xbox" | "pc" | "switch";
 
 interface FaceStats {
@@ -77,6 +79,11 @@ interface FormState {
   platform: Platform;
 }
 
+interface EvoLandingPageProps {
+  apiBaseUrl: string;
+  content: LandingPageContent;
+}
+
 const initialFormState: FormState = {
   playerName: "Jude Bellingham",
   cardType: "Rare Gold",
@@ -121,7 +128,35 @@ function formatCoins(value: number) {
   return new Intl.NumberFormat("en-GB").format(value);
 }
 
-export function EvoLandingPage({ apiBaseUrl }: { apiBaseUrl: string }) {
+async function readApiError(response: Response) {
+  const responseText = (await response.text()).trim();
+  return responseText || "Unable to value card right now.";
+}
+
+function buildValuationRequest(formState: FormState): ValuationRequest {
+  return {
+    player_name: formState.playerName.trim(),
+    base_card_type: formState.cardType.trim(),
+    final_overall: toNumber(formState.overall),
+    positions: parseListField(formState.positions),
+    weak_foot: toNumber(formState.weakFoot),
+    skill_moves: toNumber(formState.skillMoves),
+    playstyles: parseListField(formState.playstyles),
+    playstyles_plus: parseListField(formState.playstylesPlus),
+    face_stats: {
+      pace: toNumber(formState.pace),
+      shooting: toNumber(formState.shooting),
+      passing: toNumber(formState.passing),
+      dribbling: toNumber(formState.dribbling),
+      defending: toNumber(formState.defending),
+      physical: toNumber(formState.physical),
+    },
+    platform: formState.platform,
+    source_prices: [],
+  };
+}
+
+export function EvoLandingPage({ apiBaseUrl, content }: EvoLandingPageProps) {
   const [formState, setFormState] = useState<FormState>(initialFormState);
   const [result, setResult] = useState<ValuationResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -132,26 +167,7 @@ export function EvoLandingPage({ apiBaseUrl }: { apiBaseUrl: string }) {
     setIsSubmitting(true);
     setError(null);
 
-    const payload: ValuationRequest = {
-      player_name: formState.playerName.trim(),
-      base_card_type: formState.cardType.trim(),
-      final_overall: toNumber(formState.overall),
-      positions: parseListField(formState.positions),
-      weak_foot: toNumber(formState.weakFoot),
-      skill_moves: toNumber(formState.skillMoves),
-      playstyles: parseListField(formState.playstyles),
-      playstyles_plus: parseListField(formState.playstylesPlus),
-      face_stats: {
-        pace: toNumber(formState.pace),
-        shooting: toNumber(formState.shooting),
-        passing: toNumber(formState.passing),
-        dribbling: toNumber(formState.dribbling),
-        defending: toNumber(formState.defending),
-        physical: toNumber(formState.physical),
-      },
-      platform: formState.platform,
-      source_prices: [],
-    };
+    const payload = buildValuationRequest(formState);
 
     try {
       const response = await fetch(`${apiBaseUrl}/valuation/evo`, {
@@ -163,8 +179,7 @@ export function EvoLandingPage({ apiBaseUrl }: { apiBaseUrl: string }) {
       });
 
       if (!response.ok) {
-        const responseText = await response.text();
-        throw new Error(responseText || "Unable to value card.");
+        throw new Error(await readApiError(response));
       }
 
       const data = (await response.json()) as ValuationResponse;
@@ -184,12 +199,9 @@ export function EvoLandingPage({ apiBaseUrl }: { apiBaseUrl: string }) {
   return (
     <main className="landing-shell">
       <section className="landing-intro">
-        <p className="landing-badge">EvoWorth valuation</p>
-        <h1>Price your evolved card in a single pass.</h1>
-        <p className="landing-copy">
-          Enter the card profile, submit it to the valuation API, and review the
-          estimated price, confidence, sources, and comparables in one place.
-        </p>
+        <p className="landing-badge">{content.productName} valuation</p>
+        <h1>{content.headline}</h1>
+        <p className="landing-copy">{content.description}</p>
       </section>
 
       <section className="landing-grid">
@@ -200,7 +212,7 @@ export function EvoLandingPage({ apiBaseUrl }: { apiBaseUrl: string }) {
               <h2>Card details</h2>
             </div>
             <a href={`${apiBaseUrl}/health`} target="_blank" rel="noreferrer">
-              API health
+              {content.healthLinkLabel}
             </a>
           </div>
 
@@ -459,7 +471,7 @@ export function EvoLandingPage({ apiBaseUrl }: { apiBaseUrl: string }) {
                       <div>
                         <strong>{card.player_name}</strong>
                         <p>
-                          {card.base_card_type} · {card.positions.join(", ")}
+                          {card.base_card_type} {"\u00b7"} {card.positions.join(", ")}
                         </p>
                       </div>
                       <span>{formatCoins(card.median_price_now)} coins</span>

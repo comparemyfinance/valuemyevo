@@ -45,7 +45,7 @@ class SourceAdapterTests(unittest.TestCase):
         self.assertEqual(source_price.platform, "playstation")
         self.assertEqual(source_price.currency, "coins")
 
-    def test_placeholder_adapters_return_mocked_values(self) -> None:
+    def test_placeholder_adapters_return_sample_values(self) -> None:
         source_prices = [
             FutbinAdapter().get_current_price(self.card_query),
             FutggAdapter().get_current_price(self.card_query),

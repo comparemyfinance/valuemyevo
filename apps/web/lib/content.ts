@@ -2,15 +2,13 @@ export interface LandingPageContent {
   productName: string;
   headline: string;
   description: string;
-  apiLinkLabel: string;
   healthLinkLabel: string;
 }
 
 export const landingPageContent: LandingPageContent = {
   productName: "EvoWorth",
-  headline: "Track value with a foundation built to grow.",
+  headline: "Price your evolved card with a cleaner valuation workflow.",
   description:
-    "This monorepo starts with a clean Next.js frontend, a FastAPI backend, and the minimum structure needed to move quickly without accumulating noise.",
-  apiLinkLabel: "View API",
-  healthLinkLabel: "Check health",
+    "Enter the card profile, submit it to the valuation API, and review the estimated price, confidence, sources, and comparables in one place.",
+  healthLinkLabel: "API health",
 };

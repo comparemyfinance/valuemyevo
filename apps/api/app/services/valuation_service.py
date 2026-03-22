@@ -1,13 +1,13 @@
 from app.adapters.valuation_adapter import normalize_valuation_response
 from app.schemas.valuation import ComparableCard, EvoCardInput, ValuationResponse
-from app.services.valuation_provider import get_stub_valuation_result
+from app.services.valuation_provider import get_sample_valuation_result
 from app.utils.median import calculate_median
 
 
 def build_valuation_response(card: EvoCardInput) -> ValuationResponse:
-    stub_result = get_stub_valuation_result(card)
-    source_prices = stub_result.source_prices
-    comparable_cards: list[ComparableCard] = stub_result.comparable_cards
+    sample_result = get_sample_valuation_result(card)
+    source_prices = sample_result.source_prices
+    comparable_cards: list[ComparableCard] = sample_result.comparable_cards
     median_price_now = _calculate_median_price(source_prices)
     confidence = _calculate_confidence(source_prices, comparable_cards)
     explanation = _build_explanation(source_prices, comparable_cards)
@@ -45,8 +45,9 @@ def _build_explanation(
     comparable_cards: list[ComparableCard],
 ) -> str:
     return (
-        "Stub valuation service returned mocked market source prices and mocked "
-        f"comparable cards. Median price is derived from {len(source_prices)} "
+        "Sample valuation data returned normalized market source prices and "
+        "sample comparable cards. Median price is derived from "
+        f"{len(source_prices)} "
         f"available source prices and benchmarked against {len(comparable_cards)} "
-        "mock comparables."
+        "sample comparables."
     )

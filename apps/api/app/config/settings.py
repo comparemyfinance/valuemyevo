@@ -15,14 +15,29 @@ class ApiSettings:
 
 
 def get_settings() -> ApiSettings:
+    app_port = _parse_int_env("APP_PORT", "8000")
+    valuation_sample_values = parse_float_list(
+        os.getenv("VALUATION_SAMPLE_VALUES", "12000,15000,18000")
+    )
+
     return ApiSettings(
         app_name=os.getenv("APP_NAME", "EvoWorth API"),
         app_env=os.getenv("APP_ENV", "development"),
         app_version=os.getenv("APP_VERSION", "0.1.0"),
-        app_port=int(os.getenv("APP_PORT", "8000")),
-        valuation_currency_code=os.getenv("VALUATION_CURRENCY_CODE", "GBP"),
-        valuation_sample_values=parse_float_list(
-            os.getenv("VALUATION_SAMPLE_VALUES", "12000,15000,18000")
-        ),
+        app_port=app_port,
+        valuation_currency_code=os.getenv("VALUATION_CURRENCY_CODE", "coins").strip()
+        or "coins",
+        valuation_sample_values=valuation_sample_values,
     )
+
+
+def _parse_int_env(variable_name: str, default_value: str) -> int:
+    raw_value = os.getenv(variable_name, default_value).strip()
+
+    try:
+        return int(raw_value)
+    except ValueError as exc:
+        raise ValueError(
+            f"{variable_name} must be an integer, received '{raw_value}'."
+        ) from exc
 
