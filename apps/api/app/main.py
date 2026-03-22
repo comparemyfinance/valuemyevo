@@ -1,38 +1,23 @@
 from fastapi import FastAPI
 
-
-app = FastAPI(
-    title="EvoWorth API",
-    version="0.1.0",
-    docs_url="/docs",
-    redoc_url="/redoc",
-)
+from app.config.settings import get_settings
+from app.routers.meta import router as meta_router
+from app.routers.valuation import router as valuation_router
 
 
-@app.get("/", tags=["meta"])
-def read_root() -> dict[str, str]:
-    return {
-        "name": "EvoWorth API",
-        "status": "ok",
-    }
+def create_application() -> FastAPI:
+    settings = get_settings()
+
+    application = FastAPI(
+        title=settings.app_name,
+        version=settings.app_version,
+        docs_url="/docs",
+        redoc_url="/redoc",
+    )
+    application.include_router(meta_router)
+    application.include_router(valuation_router)
+    return application
 
 
-@app.get("/health", tags=["meta"])
-def health() -> dict[str, str]:
-    return {
-        "status": "ok",
-    }
+app = create_application()
 
-
-@app.get("/health/live", tags=["meta"])
-def liveness() -> dict[str, str]:
-    return {
-        "status": "ok",
-    }
-
-
-@app.get("/health/ready", tags=["meta"])
-def readiness() -> dict[str, str]:
-    return {
-        "status": "ok",
-    }
