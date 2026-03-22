@@ -4,7 +4,7 @@ from unittest.mock import patch
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.services.valuation_provider import StubValuationResult
+from app.services.valuation_provider import SampleValuationResult
 
 
 class ValuationResponseTests(unittest.TestCase):
@@ -65,7 +65,7 @@ class ValuationResponseTests(unittest.TestCase):
         self.assertEqual(len(response_json["source_prices"]), 3)
         self.assertEqual(len(response_json["comparable_cards"]), 2)
         self.assertEqual(response_json["confidence"], 0.89)
-        self.assertIn("mocked", response_json["explanation"])
+        self.assertIn("sample", response_json["explanation"])
 
     def test_post_valuation_success_case(self) -> None:
         response = self.client.post("/valuation", json=self.payload)
@@ -75,8 +75,8 @@ class ValuationResponseTests(unittest.TestCase):
 
     def test_missing_source_prices_returns_zero_median(self) -> None:
         with patch(
-            "app.services.valuation_service.get_stub_valuation_result",
-            return_value=StubValuationResult(
+            "app.services.valuation_service.get_sample_valuation_result",
+            return_value=SampleValuationResult(
                 source_prices=[],
                 comparable_cards=[],
             ),

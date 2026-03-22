@@ -5,6 +5,7 @@ dist/
 build/
 coverage/
 .pytest_cache/
+*.tsbuildinfo
 *.pyc
 __pycache__/
 .env

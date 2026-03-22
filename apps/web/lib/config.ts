@@ -4,7 +4,12 @@ export interface WebRuntimeConfig {
 
 export function getWebRuntimeConfig(): WebRuntimeConfig {
   return {
-    apiBaseUrl: process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000",
+    apiBaseUrl: normalizeApiBaseUrl(process.env.NEXT_PUBLIC_API_BASE_URL),
   };
+}
+
+function normalizeApiBaseUrl(rawApiBaseUrl: string | undefined): string {
+  const normalizedApiBaseUrl = rawApiBaseUrl?.trim() || "http://localhost:8000";
+  return normalizedApiBaseUrl.replace(/\/+$/, "");
 }
 
