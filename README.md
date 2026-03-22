@@ -20,22 +20,25 @@ scripts/ Windows setup and development scripts
 
 ## Setup
 
-1. Copy the example environment files:
-   - `apps/web/.env.example` -> `apps/web/.env.local`
-   - `apps/api/.env.example` -> `apps/api/.env`
-2. Run the Windows setup script:
+Run the Windows setup script:
 
 ```powershell
 .\scripts\setup.ps1
 ```
 
+This will:
+
+- create `apps/api/.venv` if it does not exist
+- install Python dependencies from `apps/api/requirements.txt`
+- install web dependencies with `pnpm` in `apps/web`
+- copy each app's `.env.example` to `.env` if missing
+
 ## Run locally
 
-Start both services in separate PowerShell windows:
+Start both services from the repo root:
 
 ```powershell
-.\scripts\dev.ps1 web
-.\scripts\dev.ps1 api
+.\scripts\dev.ps1
 ```
 
 Default local URLs:

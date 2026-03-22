@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "EvoWorth",
-  description: "EvoWorth compares evolving financial value with a clean web and API foundation.",
+  description: "Minimal landing page for submitting evolved FC card inputs and rendering valuation API responses.",
 };
 
 export default function RootLayout({
