@@ -1,66 +1,123 @@
 # EvoWorth
 
-Minimal production-minded monorepo foundation for EvoWorth.
+EvoWorth is an early-stage product for understanding and comparing the evolving value of financial opportunities. This repo is the foundation for that product: a public web app, a Python API, and a clean monorepo layout designed for further product development.
 
-## Structure
+## What exists today
+
+- `apps/web` is a Next.js App Router frontend with a simple landing page.
+- `apps/api` is a FastAPI backend with health endpoints and a mocked valuation summary endpoint.
+- `scripts/setup.ps1` installs dependencies and prepares local env files on Windows.
+- `scripts/dev.ps1` starts both local apps in separate PowerShell windows.
+
+## What is mocked vs not implemented yet
+
+- Mocked:
+  - The valuation summary response is sample data driven by environment variables.
+- Implemented:
+  - Web landing page
+  - API root endpoint
+  - API health, liveness, and readiness endpoints
+  - Local Windows setup and dev scripts
+- Not implemented yet:
+  - Authentication
+  - Scraping logic
+  - Real valuation pipelines or persistent storage
+  - Payments
+  - Admin tooling
+  - Docker
+
+## Repo structure
 
 ```text
 apps/
-  api/   FastAPI backend with routers, services, adapters, schemas, utils, and tests
-  web/   Next.js App Router frontend
-docs/    Product and technical documentation
-scripts/ Windows setup and development scripts
+  api/
+    app/
+      adapters/   normalize outbound data
+      config/     environment-backed settings
+      routers/    HTTP route wiring only
+      schemas/    typed response contracts
+      services/   business flow
+      utils/      parsing and median helpers
+    tests/        baseline API tests
+  web/
+    app/          Next.js App Router pages and layout
+    lib/          typed frontend config and content
+docs/             product and technical notes
+scripts/          Windows setup and local dev scripts
 ```
 
-## Prerequisites
+## Windows prerequisites
+
+Install these before running any repo scripts:
 
 - Node.js 20+
-- npm 10+
-- Python 3.11+ for the API
+- pnpm
+- Python 3.11+
 
-## Setup
+Useful checks:
 
-Run the Windows setup script:
+```powershell
+node --version
+pnpm --version
+python --version
+```
+
+If PowerShell blocks local scripts, open PowerShell as your user and run:
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+```
+
+## Setup on Windows
+
+From the repo root, run:
 
 ```powershell
 .\scripts\setup.ps1
 ```
 
-This will:
+`setup.ps1` does the following:
 
-- create `apps/api/.venv` if it does not exist
-- install Python dependencies from `apps/api/requirements.txt`
-- install web dependencies with `pnpm` in `apps/web`
-- copy each app's `.env.example` to `.env` if missing
+- creates `apps/api/.venv` if it does not already exist
+- installs Python dependencies from `apps/api/requirements.txt`
+- installs web dependencies with `pnpm` in `apps/web`
+- copies `apps/api/.env.example` to `apps/api/.env` if missing
+- copies `apps/web/.env.example` to `apps/web/.env` if missing
 
-## Run locally
+After setup, review these files if you want to change local defaults:
 
-Start both services from the repo root:
+- `apps/api/.env`
+- `apps/web/.env`
+
+## Start both apps locally
+
+From the repo root, run:
 
 ```powershell
 .\scripts\dev.ps1
 ```
 
-Default local URLs:
+`dev.ps1` opens two PowerShell windows:
+
+- API: FastAPI with Uvicorn on `http://localhost:8000`
+- Web: Next.js dev server on `http://localhost:3000`
+
+Local endpoints:
 
 - Web: [http://localhost:3000](http://localhost:3000)
-- API: [http://localhost:8000](http://localhost:8000)
+- API root: [http://localhost:8000](http://localhost:8000)
 - API health: [http://localhost:8000/health](http://localhost:8000/health)
+- API liveness: [http://localhost:8000/health/live](http://localhost:8000/health/live)
+- API readiness: [http://localhost:8000/health/ready](http://localhost:8000/health/ready)
 - API valuation summary: [http://localhost:8000/valuation/summary](http://localhost:8000/valuation/summary)
 
 ## Engineering conventions
 
-- Use typed interfaces and response models.
-- Keep files small and focused.
-- Keep routers thin and free of business logic.
+- Use typed interfaces and typed response models.
+- Keep files small and explicit.
+- Keep business logic out of routers.
 - Services call adapters.
-- Adapters normalize data before it leaves the service boundary.
+- Adapters normalize data.
 - Shared parsing and median helpers live under `utils`.
-- Runtime configuration comes from environment variables.
+- Runtime config comes from environment variables.
 - Keep naming stable and explicit.
-
-## Notes
-
-- Docker is intentionally not included yet.
-- Auth is intentionally not included yet.
-- Scraping logic is intentionally not included yet.
