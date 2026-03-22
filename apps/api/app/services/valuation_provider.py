@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from app.adapters.base import EasySbcAdapter, FutbinAdapter, FutggAdapter
 from app.schemas.valuation import ComparableCard, EvoCardInput, SourcePrice
 
 
@@ -21,33 +22,12 @@ def get_stub_valuation_result(card: EvoCardInput) -> StubValuationResult:
 
 
 def _build_mock_source_prices(card: EvoCardInput) -> list[SourcePrice]:
-    baseline_price = max(10000, card.final_overall * 2100)
-    return [
-        SourcePrice(
-            source_name="futbin",
-            platform=card.platform,
-            price=baseline_price,
-            currency="coins",
-            observed_at="2026-03-22T12:00:00Z",
-            url="https://www.futbin.com/",
-        ),
-        SourcePrice(
-            source_name="futwiz",
-            platform=card.platform,
-            price=baseline_price + 3500,
-            currency="coins",
-            observed_at="2026-03-22T12:03:00Z",
-            url="https://www.futwiz.com/",
-        ),
-        SourcePrice(
-            source_name="easysbc",
-            platform=card.platform,
-            price=baseline_price - 1500,
-            currency="coins",
-            observed_at="2026-03-22T12:05:00Z",
-            url="https://www.easysbc.io/",
-        ),
+    adapters = [
+        FutbinAdapter(),
+        FutggAdapter(),
+        EasySbcAdapter(),
     ]
+    return [adapter.get_current_price(card) for adapter in adapters]
 
 
 def _build_mock_comparable_cards(

@@ -1,23 +1,5 @@
+from app.adapters.base import normalize_source_price
 from app.schemas.valuation import ComparableCard, EvoCardInput, SourcePrice, ValuationResponse
-
-
-def normalize_source_price(
-    *,
-    source_name: str,
-    platform: str,
-    price: int,
-    currency: str,
-    observed_at: str | None = None,
-    url: str | None = None,
-) -> SourcePrice:
-    return SourcePrice(
-        source_name=source_name.strip(),
-        platform=platform.lower(),
-        price=price,
-        currency=currency.lower(),
-        observed_at=observed_at,
-        url=url,
-    )
 
 
 def normalize_comparable_card(comparable_card: ComparableCard) -> ComparableCard:
