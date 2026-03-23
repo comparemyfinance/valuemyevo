@@ -7,8 +7,10 @@ coverage/
 .pytest_cache/
 *.tsbuildinfo
 *.pyc
+*.log
 __pycache__/
 .env
 .env.local
+.env.*.local
 .DS_Store
 
