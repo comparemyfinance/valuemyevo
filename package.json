@@ -6,6 +6,8 @@
     "apps/*"
   ],
   "scripts": {
+    "setup:windows": "powershell -ExecutionPolicy Bypass -File .\\scripts\\setup.ps1",
+    "dev": "powershell -ExecutionPolicy Bypass -File .\\scripts\\dev.ps1",
     "dev:web": "npm --workspace @evoworth/web run dev",
     "build:web": "npm --workspace @evoworth/web run build",
     "start:web": "npm --workspace @evoworth/web run start",

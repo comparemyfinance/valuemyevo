@@ -17,7 +17,7 @@ class ApiSettings:
 def get_settings() -> ApiSettings:
     app_port = _parse_int_env("APP_PORT", "8000")
     valuation_sample_values = parse_float_list(
-        os.getenv("VALUATION_SAMPLE_VALUES", "12000,15000,18000")
+        os.getenv("VALUATION_SAMPLE_VALUES", "191100,194600,189600")
     )
 
     return ApiSettings(

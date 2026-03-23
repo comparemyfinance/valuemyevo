@@ -5,18 +5,19 @@ EvoWorth is an early-stage product for understanding and comparing the evolving 
 ## What exists today
 
 - `apps/web` is a Next.js App Router frontend with a simple landing page.
-- `apps/api` is a FastAPI backend with health endpoints and a mocked valuation summary endpoint.
+- `apps/api` is a FastAPI backend with health endpoints and sample valuation endpoints.
 - `scripts/setup.ps1` installs dependencies and prepares local env files on Windows.
 - `scripts/dev.ps1` starts both local apps in separate PowerShell windows.
 
-## What is mocked vs not implemented yet
+## What is sample data vs not implemented yet
 
-- Mocked:
-  - The valuation summary response is sample data driven by environment variables.
+- Sample data:
+  - The valuation endpoints return sample prices and comparables driven by environment variables.
 - Implemented:
   - Web landing page
   - API root endpoint
   - API health, liveness, and readiness endpoints
+  - API valuation endpoints at `/valuation` and `/valuation/evo`
   - Local Windows setup and dev scripts
 - Not implemented yet:
   - Authentication
@@ -51,14 +52,13 @@ scripts/          Windows setup and local dev scripts
 Install these before running any repo scripts:
 
 - Node.js 20+
-- pnpm
 - Python 3.11+
 
 Useful checks:
 
 ```powershell
 node --version
-pnpm --version
+npm --version
 python --version
 ```
 
@@ -76,11 +76,17 @@ From the repo root, run:
 .\scripts\setup.ps1
 ```
 
+Or:
+
+```powershell
+npm run setup:windows
+```
+
 `setup.ps1` does the following:
 
 - creates `apps/api/.venv` if it does not already exist
 - installs Python dependencies from `apps/api/requirements.txt`
-- installs web dependencies with `pnpm` in `apps/web`
+- installs root and workspace Node dependencies with `npm`
 - copies `apps/api/.env.example` to `apps/api/.env` if missing
 - copies `apps/web/.env.example` to `apps/web/.env` if missing
 
@@ -97,9 +103,15 @@ From the repo root, run:
 .\scripts\dev.ps1
 ```
 
+Or:
+
+```powershell
+npm run dev
+```
+
 `dev.ps1` opens two PowerShell windows:
 
-- API: FastAPI with Uvicorn on `http://localhost:8000`
+- API: FastAPI with Uvicorn on `http://localhost:8000` by default, or `APP_PORT` from `apps/api/.env`
 - Web: Next.js dev server on `http://localhost:3000`
 
 Local endpoints:
@@ -109,7 +121,17 @@ Local endpoints:
 - API health: [http://localhost:8000/health](http://localhost:8000/health)
 - API liveness: [http://localhost:8000/health/live](http://localhost:8000/health/live)
 - API readiness: [http://localhost:8000/health/ready](http://localhost:8000/health/ready)
-- API valuation summary: [http://localhost:8000/valuation/summary](http://localhost:8000/valuation/summary)
+- API valuation: `POST /valuation`
+- API valuation alias: `POST /valuation/evo`
+
+## Run checks
+
+From the repo root:
+
+```powershell
+npm run lint:web
+npm run test:api
+```
 
 ## Engineering conventions
 
